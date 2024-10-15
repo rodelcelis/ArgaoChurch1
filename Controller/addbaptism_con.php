@@ -465,7 +465,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
    
             // Redirect to a success page
-            header('Location: ../View/PageStaff/StaffSoloSched.php');
+            header('Location: ../View/PageStaff/StaffRequestSchedule.php');
             exit();
        
     } else {

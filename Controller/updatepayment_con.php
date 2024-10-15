@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $mpriest_id = isset($_POST['mpriest_id']) ? $_POST['mpriest_id'] : null;
     $fpriest_id = isset($_POST['fpriest_id']) ? $_POST['fpriest_id'] : null;
     $cpriest_id = isset($_POST['cpriest_id']) ? $_POST['cpriest_id'] : null;
+    $requestform_ids = isset($_POST['request_ids']) ? $_POST['request_ids'] : null;
 
     if ($baptismfill_id) {
         $decline = $staff->deleteBaptism($baptismfill_id);
@@ -55,7 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }else if($defuctom_ids){
         $decline = $staff-> approveFuneral($defuctom_ids);
         echo $decline; 
+    }else if($requestform_ids){
+        $decline = $staff-> approverequestform($requestform_ids);
+        echo $decline; 
     }
+
 
     // Handle appointment deletions
     if (isset($_POST['appsched_ids'])) {

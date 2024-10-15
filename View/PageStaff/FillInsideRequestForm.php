@@ -7,6 +7,7 @@ require_once '../../Model/citizen_mod.php';
 $citizen = new Citizen($conn);
 $staff = new Staff($conn);
 $request_id = isset($_GET['req_id']) ? intval($_GET['req_id']) : null;
+$request_ids = isset($_GET['req_id']) ? intval($_GET['req_id']) : null;
 
 if (isset($_GET['req_id'])) {
     $request_id  = intval($_GET['req_id']);
@@ -293,6 +294,7 @@ $regId = $_SESSION['citizend_id'];
     <span id="middlenamesError" class="error text-danger"></span>
 </div>
 
+
                                 </div>
                             </div>
                      
@@ -305,10 +307,10 @@ if ($event_name === 'Online') {
     echo '<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-success">Approve</button>';
 } else if ($event_name === 'Walkin') {
     // Button for walk-in approval (automatic approval)
-    echo '<button type="button" class="btn btn-success approve-btn" data-id="' . $defuctom_ids . '">Approve</button>';
+    echo '<button type="button" class="btn btn-success approve-btn" data-id="' . $request_id . '">Approve</button>';
 
 }
-?><button type="button" class="btn btn-danger decline-btn" data-id="<?php echo htmlspecialchars($defuctom_id); ?>" >Decline</button>
+?><button type="button" class="btn btn-danger decline-btn" data-id="<?php echo htmlspecialchars($request_id); ?>" >Decline</button>
 <button type="button" class="btn btn-danger" onclick="window.location.href='your_cancel_url.php'">Cancel</button>
     </div>
               
@@ -324,7 +326,7 @@ if ($event_name === 'Online') {
              document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.approve-btn').forEach(function(button) {
         button.addEventListener('click', function() {
-            var defuctom_ids = this.getAttribute('data-id');
+            var request_ids = this.getAttribute('data-id');
 
             // Automatic approval for walk-in
             Swal.fire({
@@ -347,7 +349,7 @@ if ($event_name === 'Online') {
                                 'The baptism request has been approved.',
                                 'success'
                             ).then(() => {
-                                window.location.href = 'StaffSoloSched.php';
+                                window.location.href = 'StaffRequestSchedule.php';
                             });
                         } else {
                             Swal.fire(
@@ -357,7 +359,7 @@ if ($event_name === 'Online') {
                             );
                         }
                     };
-                    xhr.send('defuctom_ids=' + encodeURIComponent(defuctom_ids));
+                    xhr.send('request_ids=' + encodeURIComponent(request_ids));
                 }
             });
         });
@@ -368,7 +370,7 @@ if ($event_name === 'Online') {
 
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.decline-btn').addEventListener('click', function() {
-        var defuctom_id = this.getAttribute('data-id');
+        var request_id = this.getAttribute('data-id');
        
 
         Swal.fire({
@@ -392,7 +394,7 @@ if ($event_name === 'Online') {
                             'success'
                         ).then(() => {
                             // Redirect after approval
-                            window.location.href = 'StaffSoloSched.php';
+                            window.location.href = 'StaffRequestSchedule.php';
                         });
                     } else {
                         console.error("Error response: ", xhr.responseText); // Log error response
@@ -405,7 +407,7 @@ if ($event_name === 'Online') {
                 };
 
                 // Send both baptismfill_id and citizen_id
-                xhr.send('defuctomfill_id=' + encodeURIComponent(defuctom_id));
+                xhr.send('request_id=' + encodeURIComponent(request_id));
             }
         });
     });
