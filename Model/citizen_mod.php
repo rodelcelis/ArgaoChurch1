@@ -82,6 +82,31 @@ class Citizen {
             return false; // Update failed
         }
     }
+    public function updaterequestformStatus($rpriest_id, $priestId) {
+        // SQL query to update the baptismfill table
+        $sql = "UPDATE req_form 
+                SET priest_id = ?, 
+                    pr_status = 'Pending' 
+                WHERE req_id = ?";
+
+        // Prepare the statement
+        $stmt = $this->conn->prepare($sql);
+
+        // Bind the parameters (priest_id, baptism_id)
+        $stmt->bind_param("ii", $priestId, $rpriest_id);
+
+        // Execute the query
+        if ($stmt->execute()) {
+            // Close the statement
+            $stmt->close();
+            return true; // Update successful
+        } else {
+            // Log error if failed and close the statement
+            error_log("Update failed: " . $stmt->error);
+            $stmt->close();
+            return false; // Update failed
+        }
+    }
     public function updateconfirmationStatus($cpriest_id, $priestId) {
         // SQL query to update the baptismfill table
         $sql = "UPDATE confirmationfill 

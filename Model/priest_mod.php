@@ -153,15 +153,15 @@ class Priest {
                 $table = 'marriagefill';
                 $idField = 'marriagefill_id';
                 break;
-                case 'requestform':
-                    $table = 'req_form';
-                    $idField = 'req_id';
-                    break;
+            case 'requestform':
+                $table = 'req_form';
+                $idField = 'req_id';
+                break;
             default:
                 return false; // Invalid appointment type
         }
     
-        // Prepare the SQL query
+        // Prepare the SQL query to approve
         $query = "UPDATE $table SET pr_status = 'Approved' WHERE $idField = ?";
     
         // Execute the query
@@ -178,6 +178,52 @@ class Priest {
             return false; // Return false if query preparation fails
         }
     }
+    
+    public function declineAppointment($appointmentId, $appointmentType) {
+        // Determine the correct table and ID field based on the appointment type
+        switch ($appointmentType) {
+            case 'baptism':
+                $table = 'baptismfill';
+                $idField = 'baptism_id';
+                break;
+            case 'confirmation':
+                $table = 'confirmationfill';
+                $idField = 'confirmationfill_id';
+                break;
+            case 'defuctom':
+                $table = 'defuctomfill';
+                $idField = 'defuctomfill_id';
+                break;
+            case 'marriage':
+                $table = 'marriagefill';
+                $idField = 'marriagefill_id';
+                break;
+            case 'requestform':
+                $table = 'req_form';
+                $idField = 'req_id';
+                break;
+            default:
+                return false; // Invalid appointment type
+        }
+    
+        // Prepare the SQL query to decline
+        $query = "UPDATE $table SET pr_status = 'Declined' WHERE $idField = ?";
+    
+        // Execute the query
+        if ($stmt = $this->conn->prepare($query)) {
+            $stmt->bind_param("i", $appointmentId);
+            if ($stmt->execute()) {
+                $stmt->close();
+                return true; // Return true on success
+            } else {
+                $stmt->close();
+                return false; // Return false on failure
+            }
+        } else {
+            return false; // Return false if query preparation fails
+        }
+    }
+    
     
     
     

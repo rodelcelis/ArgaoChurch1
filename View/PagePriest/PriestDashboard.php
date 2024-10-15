@@ -264,7 +264,7 @@ $appointmentSchedule = $appointments->getPriestAppointmentSchedule($priestId);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     // Show form submission success message using SweetAlert
     <?php if (isset($_SESSION['status']) && $_SESSION['status'] == 'success') { ?>
         Swal.fire({
@@ -281,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var appointmentId = this.getAttribute('data-id');
             var appointmentType = this.getAttribute('data-type'); // Get the type
 
-            // SweetAlert confirmation dialog
+            // SweetAlert confirmation dialog for approval
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to change this!",
@@ -321,8 +321,59 @@ document.addEventListener('DOMContentLoaded', function() {
                             );
                         }
                     };
-                    // Include the appointmentType in the request
-                    xhr.send('appointmentId=' + encodeURIComponent(appointmentId) + '&appointmentType=' + encodeURIComponent(appointmentType));
+                    xhr.send('appointmentId=' + encodeURIComponent(appointmentId) + '&appointmentType=' + encodeURIComponent(appointmentType) + '&action=approve');
+                }
+            });
+        });
+    });
+
+    // Handle the decline button click
+    document.querySelectorAll('.decline-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var appointmentId = this.getAttribute('data-id');
+            var appointmentType = this.getAttribute('data-type'); // Get the type
+
+            // SweetAlert confirmation dialog for declining
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Once declined, you cannot undo this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, decline it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Send AJAX request to decline appointment
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '../../Controller/priest_con.php', true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            if (xhr.responseText === 'success') {
+                                Swal.fire(
+                                    'Declined!',
+                                    'The appointment has been declined.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload(); // Optionally reload the page
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'There was an issue declining the appointment.',
+                                    'error'
+                                );
+                            }
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'There was an issue processing the request.',
+                                'error'
+                            );
+                        }
+                    };
+                    xhr.send('appointmentId=' + encodeURIComponent(appointmentId) + '&appointmentType=' + encodeURIComponent(appointmentType) + '&action=decline');
                 }
             });
         });

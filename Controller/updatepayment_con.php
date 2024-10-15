@@ -1,6 +1,6 @@
 <?php
-// Start output buffering to prevent headers issues
-ob_start();
+
+
 
 require_once '../Model/db_connection.php';
 require_once '../Model/staff_mod.php';
@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $bpriest_id = isset($_POST['bpriest_id']) ? $_POST['bpriest_id'] : null;
     $mpriest_id = isset($_POST['mpriest_id']) ? $_POST['mpriest_id'] : null;
     $fpriest_id = isset($_POST['fpriest_id']) ? $_POST['fpriest_id'] : null;
+    $rpriest_id = isset($_POST['rpriest_id']) ? $_POST['rpriest_id'] : null;
     $cpriest_id = isset($_POST['cpriest_id']) ? $_POST['cpriest_id'] : null;
     $requestform_ids = isset($_POST['request_ids']) ? $_POST['request_ids'] : null;
 
@@ -196,9 +197,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             echo "Failed to update marriage status.";
         }
+    }elseif ($rpriest_id) {
+        $priestId = $_POST['eventType'] ?? null;
+
+        $result = $Citizen->updaterequestformStatus($rpriest_id, $priestId);
+        if ($result) {
+            header('Location: ../View/PageStaff/FillInsideRequestForm.php?req_id=' . $rpriest_id);
+            exit;   
+        } else {
+            echo "Failed to update marriage status.";
+        }
     }  else {
         echo "Invalid priest ID.";
     }
- 
+   
 }
 ?>

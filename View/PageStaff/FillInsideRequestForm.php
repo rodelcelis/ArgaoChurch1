@@ -122,7 +122,7 @@ $regId = $_SESSION['citizend_id'];
             </div>
             <form id="modalForm2" method="POST" action="../../Controller/updatepayment_con.php">
                 <div class="modal-body">
-                    <input type="hidden" name="fpriest_id" value="<?php echo htmlspecialchars($defuctom_id); ?>" />
+                    <input type="hidden" name="rpriest_id" value="<?php echo htmlspecialchars($request_id); ?>" />
                     <div class="form-group">
                         <label for="priestSelect2">Select Priest</label>
                         <select class="form-control" id="priestSelect2" name="eventType">
