@@ -12,7 +12,6 @@ class Priest {
         $sql = "
         SELECT 
         'baptism' AS type,
-         
             b.baptism_id AS id,
             b.role AS roles,
             b.event_name AS Event_Name,
@@ -21,96 +20,102 @@ class Priest {
             s.start_time AS schedule_time,
             b.priest_id,
             priest.fullname AS priest_name
-          
-            FROM 
+        FROM 
             schedule s
-            LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
+        LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
         JOIN baptismfill b ON s.schedule_id = b.schedule_id
-    
         LEFT JOIN citizen priest ON b.priest_id = priest.citizend_id AND priest.user_type = 'Priest'  
         WHERE b.priest_id = ? 
             AND b.pr_status = 'Pending'
+        
         UNION ALL
+        
         SELECT 
         'confirmation' AS type,
-         
             cf.confirmationfill_id AS id,
             cf.role AS roles,
             cf.event_name AS Event_Name,
             c.fullname AS citizen_name,
             s.date AS schedule_date,
             s.start_time AS schedule_time,
-         
-      
             cf.priest_id,
             priest.fullname AS priest_name
-           
-          
-         
-        
-            FROM 
+        FROM 
             schedule s
-            LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
+        LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
         JOIN confirmationfill cf ON s.schedule_id = cf.schedule_id
-  
-    
         LEFT JOIN citizen priest ON cf.priest_id = priest.citizend_id AND priest.user_type = 'Priest'
         WHERE cf.priest_id = ?
             AND cf.pr_status = 'Pending'
+        
         UNION ALL
+        
         SELECT 
         'marriage' AS type,
-       
             mf.marriagefill_id AS id,
             mf.role AS roles,
             mf.event_name AS Event_Name,
             c.fullname AS citizen_name,
             s.date AS schedule_date,
             s.start_time AS schedule_time,
-           
-          
             mf.priest_id,
             priest.fullname AS priest_name
-           
-         
-            FROM 
+        FROM 
             schedule s
-            LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
+        LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
         JOIN marriagefill mf ON s.schedule_id = mf.schedule_id
-      
-      
         LEFT JOIN citizen priest ON mf.priest_id = priest.citizend_id AND priest.user_type = 'Priest'
         WHERE mf.priest_id = ?
             AND mf.pr_status = 'Pending'
+        
         UNION ALL
+        
         SELECT 
         'defuctom' AS type,
-        
             df.defuctomfill_id AS id,
             df.role AS roles,
             df.event_name AS Event_Name,
             c.fullname AS citizen_name,
             s.date AS schedule_date,
             s.start_time AS schedule_time,
-              df.priest_id,
+            df.priest_id,
             priest.fullname AS priest_name
-          
-            FROM 
+        FROM 
             schedule s
-            LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
+        LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
         JOIN defuctomfill df ON s.schedule_id = df.schedule_id
-    
-
         LEFT JOIN citizen priest ON df.priest_id = priest.citizend_id AND priest.user_type = 'Priest'
         WHERE df.priest_id = ?
             AND df.pr_status = 'Pending'
+        
+        UNION ALL
+        
+        SELECT 
+        'requestform' AS type,
+            rf.req_id AS id,
+            rf.role AS roles,
+            rf.req_category AS Event_Name,
+            rf.req_person AS citizen_name,
+            s.date AS schedule_date,
+            s.start_time AS schedule_time,
+            rf.priest_id,
+            priest.fullname AS priest_name
+        FROM 
+            schedule s
+        LEFT JOIN citizen c ON c.citizend_id = s.citizen_id 
+        JOIN req_form rf ON s.schedule_id = rf.schedule_id
+        LEFT JOIN citizen priest ON rf.priest_id = priest.citizend_id AND priest.user_type = 'Priest'
+        WHERE rf.priest_id = ?
+            AND rf.pr_status = 'Pending'
+        
+        -- Now move the ORDER BY outside the UNION ALL
         ORDER BY schedule_date ASC
         ";
-        
+    
         // Prepare and execute the statement
         $stmt = $this->conn->prepare($sql);
-        // Bind priest_id four times (for each placeholder ? in the SQL)
-        $stmt->bind_param("iiii", $priestId, $priestId, $priestId, $priestId);
+        // Bind priest_id five times (for each placeholder ? in the SQL)
+        $stmt->bind_param("iiiii", $priestId, $priestId, $priestId, $priestId, $priestId);
         $stmt->execute();
         $result = $stmt->get_result();
     
@@ -128,6 +133,7 @@ class Priest {
         // Return the result set (appointments)
         return $appointments;
     }
+    
     public function approveAppointment($appointmentId, $appointmentType) {
         // Determine the correct table and ID field based on the appointment type
         switch ($appointmentType) {
@@ -147,6 +153,10 @@ class Priest {
                 $table = 'marriagefill';
                 $idField = 'marriagefill_id';
                 break;
+                case 'requestform':
+                    $table = 'req_form';
+                    $idField = 'req_id';
+                    break;
             default:
                 return false; // Invalid appointment type
         }

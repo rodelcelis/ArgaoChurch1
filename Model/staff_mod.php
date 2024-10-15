@@ -55,7 +55,7 @@ class Staff {
             JOIN appointment_schedule a ON r.req_id = a.request_id
             LEFT JOIN citizen priest ON r.priest_id = priest.citizend_id AND priest.user_type = 'Priest' 
             WHERE 
-                r.status = 'Approve' AND (a.status = 'Process' OR a.p_status = 'Unpaid')
+                r.status = 'Approved' AND (a.status = 'Process' OR a.p_status = 'Unpaid')
         ";
     
         // Prepare and execute the query

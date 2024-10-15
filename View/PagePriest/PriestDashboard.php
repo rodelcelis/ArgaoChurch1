@@ -189,10 +189,12 @@ $appointmentSchedule = $appointments->getPriestAppointmentSchedule($priestId);
         style="background-color: #31ce36!important; border-color:#31ce36!important;">
         Approve
     </button>
-    <button class="btn btn-primary btn-xs decline-btn" data-id="<?= htmlspecialchars($appointment['id'], ENT_QUOTES, 'UTF-8') ?>" 
-        style="background-color: #d9534f!important; border-color:#d9534f!important;">
+    <button class="btn btn-danger btn-xs decline-btn"  
+        data-id="<?= htmlspecialchars($appointment['id'], ENT_QUOTES, 'UTF-8') ?>" 
+        data-type="<?= htmlspecialchars($appointment['type'], ENT_QUOTES, 'UTF-8') ?>">
         Decline
-    </button>
+</button>
+
 </td>
 
                 </tr>
@@ -326,6 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 
 
       document.getElementById('schedule-date').addEventListener('change', function() {
